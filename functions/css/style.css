@@ -1,0 +1,22 @@
+@import url(https://fonts.googleapis.com/css?family=Space+Mono:regular,italic,700,700italic);
+
+body {
+    margin: 0;
+    padding: 1rem 2rem;
+    font-family: 'Space Mono', sans-serif;
+}
+
+h1 {
+    margin-top: 0.5rem;
+}
+
+input {
+    border-radius: 3px;
+    border-width: 1px;
+    font-family: 'Space Mono', sans-serif;
+}
+
+table {
+    width: 25%;
+    text-align: center;
+}
