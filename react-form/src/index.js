@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from 'react-dom';
-import UserForm from './UserForm'
+import UserForm from './UserForm';
+import './style.css';
 
 let user = {
     name: 'Тарас Григорович Шевченко',
@@ -12,7 +13,5 @@ let user = {
         {number: '380123456789', type: 'mobile'},
     ],
 }
-
-
 
 ReactDOM.render(<UserForm user={user} />, document.getElementById('root'))
