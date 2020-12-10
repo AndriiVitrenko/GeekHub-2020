@@ -1,54 +1,60 @@
 import React, {PureComponent} from 'react';
-import $ from 'jquery';
+import styled from 'styled-components'
+
+const Input = styled.input`
+  background: ${props => props.valid ? '#C2E0C6' : '#F9D0C4'};
+`;
+
+const nameRule = /^[а-щіїьюяґє]+\s+[а-щіїьюяґє]+\s+[а-щіїьюяґє]+$/i;
+const emailRule = /^([a-zA-Z0-9-]+[a-zA-Z0-9-.]*[a-zA-Z0-9-]|[a-zA-Z0-9-]+)@[A-Za-z0-9-]+[.]*[A-Za-z0-9-]*\.[A-Za-z0-9-]+$/;
+const passwordRule = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/;
+const homePhoneRule = /^[1-9]\d{5}$/;
+const mobilePhoneRule1 = /^[0]\d{9}$/;
+const mobilePhoneRule2 = /^[3]\d{11}$/;
 
 export default class UserForm extends PureComponent {
-    state = {
-        user: this.props.user
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            user: this.props.user,
+            nameValid: nameRule.test(this.props.user.name),
+            emailValid: emailRule.test(this.props.user.email),
+            passwordValid: passwordRule.test(this.props.user.password),
+            phonesValid: [
+                true,
+                true,
+                true,
+            ]
+        }
     }
 
-    submitHandler() {
 
-        $('#user-form')[0].classList.add('submitted')
+    submitHandler(e) {
+        e.preventDefault()
 
-        const userData = this.state.user;
-        const nameField = $('input[name=full_name]')[0];
-        const emailField = $('input[name=email]')[0];
-        const passwordField = $('input[name=password]')[0];
+        const userData = Object.assign({}, this.state)
 
-        //---------rules-----------
+        userData.nameValid = nameRule.test(userData.user.name);
+        userData.emailValid = emailRule.test(userData.user.email);
+        userData.passwordValid = passwordRule.test(userData.user.password);
+        userData.phonesValid = [];
 
-        const nameRule = /^[а-щіїьюяґє]+\s+[а-щіїьюяґє]+\s+[а-щіїьюяґє]+$/i;
-        const emailRule = /^([a-zA-Z0-9-]+[a-zA-Z0-9-.]*[a-zA-Z0-9-]|[a-zA-Z0-9-]+)@[A-Za-z0-9-]+[.]*[A-Za-z0-9-]*\.[A-Za-z0-9-]+$/;
-        const passwordRule = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/;
-        const homePhoneRule = /^[1-9]\d{5}$/;
-        const mobilePhoneRule1 = /^[0]\d{9}$/;
-        const mobilePhoneRule2 = /^[3]\d{11}$/;
+        for (let i = 0; i < userData.user.phones.length; i++) {
+            const phone = userData.user.phones[i];
 
-        //----------validating----------------
-
-        nameField.classList.add(nameRule.test(userData.name) ? 'valid' : 'invalid');
-        nameField.classList.remove(nameRule.test(userData.name) ? 'invalid' : 'valid');
-        emailField.classList.add(emailRule.test(userData.email) ? 'valid': 'invalid');
-        emailField.classList.remove(emailRule.test(userData.email) ? 'invalid': 'valid');
-        passwordField.classList.add(passwordRule.test(userData.password) ? 'valid': 'invalid');
-        passwordField.classList.remove(passwordRule.test(userData.password) ? 'invalid': 'valid');
-
-        for (let i = 0; i < userData.phones.length; i++) {
-            if (userData.phones[i].type === 'home') {
-                const elem = $(`#${userData.phones[i].number + 1}`)[0]
-                elem.classList.remove(homePhoneRule.test(userData.phones[i].number) ? 'invalid' : 'valid');
-                elem.classList.add(homePhoneRule.test(userData.phones[i].number) ? 'valid' : 'invalid')
-
+            if (phone.type === 'home') {
+                userData.phonesValid.push(homePhoneRule.test(phone.number))
             }
-            else if (userData.phones[i].type === 'mobile') {
-                const elem = $(`#${userData.phones[i].number + 1}`)[0]
-                elem.classList.remove(mobilePhoneRule1.test(userData.phones[i].number) || mobilePhoneRule2.test(userData.phones[i].number) ? 'invalid' : 'valid');
-                elem.classList.add(mobilePhoneRule1.test(userData.phones[i].number) || mobilePhoneRule2.test(userData.phones[i].number) ? 'valid' : 'invalid')
+            else if (phone.type === 'mobile' && (mobilePhoneRule1.test(phone.number) || mobilePhoneRule2.test(phone.number))) {
+                userData.phonesValid.push(true)
             }
             else {
-                $(`#${userData.phones[i].number + 1}`)[0].classList.add('invalid')
+                userData.phonesValid.push(false)
             }
         }
+
+        this.setState(userData)
     }
 
     fieldChangeHandler(e, fieldName, origin) {
@@ -59,10 +65,6 @@ export default class UserForm extends PureComponent {
     removeNode(event, index, origin) {
         origin.phones.splice(index, 1)
         this.setState({user: origin})
-
-        if($('#user-form').hasClass('submitted')) {
-            this.submitHandler()
-        }
     }
 
     addNode(origin) {
@@ -90,7 +92,7 @@ export default class UserForm extends PureComponent {
         const phones = user.phones.map((elem, i) => {
             return (
                 <div key={i} className="input-group mb-3">
-                    <input id={elem.number + 1} type="text" className="form-control" value={elem.number || ''} onChange={(e) => {this.phoneChangeHandler(e, i, user)}}/>
+                    <Input valid={this.state.phonesValid[i]} type="text" className="form-control" value={elem.number || ''} onChange={(e) => {this.phoneChangeHandler(e, i, user)}}/>
                     <select className="custom-select" defaultValue={elem.type || 'home'} onChange={(e) => {this.selectHandler(e, i, user)}}>
                         <option value="home">Домашній</option>
                         <option value="mobile">Мобільний</option>
@@ -104,21 +106,21 @@ export default class UserForm extends PureComponent {
 
         return (
             <div className="container p-5">
-                <form id="user-form" onSubmit={(e) => {e.preventDefault();this.submitHandler()}}>
+                <form id="user-form" onSubmit={(e) => {this.submitHandler(e)}}>
                     <div className="form-group">
                         <label>П.І.Б.</label>
-                        <input type="text" name="full_name" className="form-control" id="name" value={user.name} onChange={(e) => {this.fieldChangeHandler(e, 'name', user)}}/>
+                        <Input valid={this.state.nameValid} type="text" name="full_name" className="form-control" id="name" value={user.name} onChange={(e) => {this.fieldChangeHandler(e, 'name', user)}}/>
                         <small className="form-text text-muted">Обовʼязково прізвище, імʼя та по батькові. Тільки літерами
                             українскього алфавіту</small>
                     </div>
                     <div className="form-group">
                         <label>Email</label>
-                        <input type="text" name="email" className="form-control" id="email" value={user.email} onChange={(e) => {this.fieldChangeHandler(e, 'email', user)}}/>
+                        <Input valid={this.state.emailValid} type="text" name="email" className="form-control" id="email" value={user.email} onChange={(e) => {this.fieldChangeHandler(e, 'email', user)}}/>
                         <small className="form-text text-muted">Адреса електронної пошти</small>
                     </div>
                     <div className="form-group">
                         <label>Пароль</label>
-                        <input type="password" name="password" className="form-control" id="password" value={user.password} onChange={(e) => {this.fieldChangeHandler(e, 'password', user)}}/>
+                        <Input valid={this.state.passwordValid} type="password" name="password" className="form-control" id="password" value={user.password} onChange={(e) => {this.fieldChangeHandler(e, 'password', user)}}/>
                         <small className="form-text text-muted">Мінімум 8 літер. Обовʼязково повинні бути великі та малі
                             літери
                             англійського алфавіту та числа</small>

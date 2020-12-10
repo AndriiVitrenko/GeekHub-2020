@@ -1,7 +1,6 @@
 import React from "react";
 import ReactDOM from 'react-dom';
 import UserForm from './UserForm';
-import './style.css';
 
 let user = {
     name: 'Тарас Григорович Шевченко',
