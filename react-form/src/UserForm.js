@@ -2,7 +2,14 @@ import React, {PureComponent} from 'react';
 import styled from 'styled-components'
 
 const Input = styled.input`
-  background: ${props => props.valid ? '#C2E0C6' : '#F9D0C4'};
+  background: ${props => {
+    if (props.valid === undefined) {
+      return 'none'
+    } else {
+      return props.valid ? '#C2E0C6' : '#F9D0C4'
+    }
+  }
+  }
 `;
 
 const nameRule = /^[а-щіїьюяґє]+\s+[а-щіїьюяґє]+\s+[а-щіїьюяґє]+$/i;
@@ -18,20 +25,17 @@ export default class UserForm extends PureComponent {
 
         this.state = {
             user: this.props.user,
-            nameValid: nameRule.test(this.props.user.name),
-            emailValid: emailRule.test(this.props.user.email),
-            passwordValid: passwordRule.test(this.props.user.password),
-            phonesValid: [
-                true,
-                true,
-                true,
-            ]
+            validated: false,
+            nameValid: undefined,
+            emailValid: undefined,
+            passwordValid: undefined,
+            phonesValid: []
         }
     }
 
 
-    submitHandler(e) {
-        e.preventDefault()
+    submitHandler() {
+
 
         const userData = Object.assign({}, this.state)
 
@@ -54,6 +58,8 @@ export default class UserForm extends PureComponent {
             }
         }
 
+        userData.validated = true;
+
         this.setState(userData)
     }
 
@@ -65,6 +71,11 @@ export default class UserForm extends PureComponent {
     removeNode(event, index, origin) {
         origin.phones.splice(index, 1)
         this.setState({user: origin})
+
+        if (this.state.validated) {
+            this.submitHandler()
+        }
+
     }
 
     addNode(origin) {
@@ -106,7 +117,7 @@ export default class UserForm extends PureComponent {
 
         return (
             <div className="container p-5">
-                <form id="user-form" onSubmit={(e) => {this.submitHandler(e)}}>
+                <form id="user-form" onSubmit={(e) => {e.preventDefault(); this.submitHandler()}}>
                     <div className="form-group">
                         <label>П.І.Б.</label>
                         <Input valid={this.state.nameValid} type="text" name="full_name" className="form-control" id="name" value={user.name} onChange={(e) => {this.fieldChangeHandler(e, 'name', user)}}/>
