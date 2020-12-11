@@ -787,7 +787,7 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
 function _templateObject() {
-  var data = _taggedTemplateLiteral(["\n  background: ", ";\n"]);
+  var data = _taggedTemplateLiteral(["\n  background: ", "\n"]);
 
   _templateObject = function _templateObject() {
     return data;
@@ -801,7 +801,11 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 
 
 var Input = styled_components__WEBPACK_IMPORTED_MODULE_1__.default.input(_templateObject(), function (props) {
-  return props.valid ? '#C2E0C6' : '#F9D0C4';
+  if (props.valid === undefined) {
+    return 'none';
+  } else {
+    return props.valid ? '#C2E0C6' : '#F9D0C4';
+  }
 });
 var nameRule = /^[а-щіїьюяґє]+\s+[а-щіїьюяґє]+\s+[а-щіїьюяґє]+$/i;
 var emailRule = /^([a-zA-Z0-9-]+[a-zA-Z0-9-.]*[a-zA-Z0-9-]|[a-zA-Z0-9-]+)@[A-Za-z0-9-]+[.]*[A-Za-z0-9-]*\.[A-Za-z0-9-]+$/;
@@ -823,18 +827,18 @@ var UserForm = /*#__PURE__*/function (_PureComponent) {
     _this = _super.call(this, props);
     _this.state = {
       user: _this.props.user,
-      nameValid: nameRule.test(_this.props.user.name),
-      emailValid: emailRule.test(_this.props.user.email),
-      passwordValid: passwordRule.test(_this.props.user.password),
-      phonesValid: [true, true, true]
+      validated: false,
+      nameValid: undefined,
+      emailValid: undefined,
+      passwordValid: undefined,
+      phonesValid: []
     };
     return _this;
   }
 
   _createClass(UserForm, [{
     key: "submitHandler",
-    value: function submitHandler(e) {
-      e.preventDefault();
+    value: function submitHandler() {
       var userData = Object.assign({}, this.state);
       userData.nameValid = nameRule.test(userData.user.name);
       userData.emailValid = emailRule.test(userData.user.email);
@@ -853,6 +857,7 @@ var UserForm = /*#__PURE__*/function (_PureComponent) {
         }
       }
 
+      userData.validated = true;
       this.setState(userData);
     }
   }, {
@@ -870,6 +875,10 @@ var UserForm = /*#__PURE__*/function (_PureComponent) {
       this.setState({
         user: origin
       });
+
+      if (this.state.validated) {
+        this.submitHandler();
+      }
     }
   }, {
     key: "addNode",
@@ -941,7 +950,9 @@ var UserForm = /*#__PURE__*/function (_PureComponent) {
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("form", {
         id: "user-form",
         onSubmit: function onSubmit(e) {
-          _this2.submitHandler(e);
+          e.preventDefault();
+
+          _this2.submitHandler();
         }
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         className: "form-group"
