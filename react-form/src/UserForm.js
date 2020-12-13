@@ -33,83 +33,89 @@ export default class UserForm extends PureComponent {
         }
     }
 
-
     submitHandler() {
 
+        let nameValid = nameRule.test(this.state.user.name);
+        let emailValid = emailRule.test(this.state.user.email);
+        let passwordValid = passwordRule.test(this.state.user.password);
+        let phonesValid = [];
 
-        const userData = Object.assign({}, this.state)
-
-        userData.nameValid = nameRule.test(userData.user.name);
-        userData.emailValid = emailRule.test(userData.user.email);
-        userData.passwordValid = passwordRule.test(userData.user.password);
-        userData.phonesValid = [];
-
-        for (let i = 0; i < userData.user.phones.length; i++) {
-            const phone = userData.user.phones[i];
+        for (let i = 0; i < this.state.user.phones.length; i++) {
+            const phone = this.state.user.phones[i];
 
             if (phone.type === 'home') {
-                userData.phonesValid.push(homePhoneRule.test(phone.number))
+                phonesValid.push(homePhoneRule.test(phone.number))
             }
             else if (phone.type === 'mobile' && (mobilePhoneRule1.test(phone.number) || mobilePhoneRule2.test(phone.number))) {
-                userData.phonesValid.push(true)
+                phonesValid.push(true)
             }
             else {
-                userData.phonesValid.push(false)
+                phonesValid.push(false)
             }
         }
 
-        userData.validated = true;
-
-        this.setState(userData)
+        this.setState(
+            {
+                user: this.state.user,
+                validated: true,
+                nameValid,
+                emailValid,
+                passwordValid,
+                phonesValid,
+            }
+        )
     }
 
-    fieldChangeHandler(e, fieldName, origin) {
-        origin[fieldName] = e.target.value;
-        this.setState({user: origin})
+    fieldChangeHandler(e, fieldName) {
+        let user = Object.assign({}, this.state.user)
+        user[fieldName] = e.target.value;
+        this.setState({user})
     }
 
-    removeNode(event, index, origin) {
-        origin.phones.splice(index, 1)
-        this.setState({user: origin})
-
-        if (this.state.validated) {
-            this.submitHandler()
-        }
-
+    removeNode(event, index) {
+        let user = Object.assign({}, this.state.user)
+        let phonesValid = Array.from(this.state.phonesValid)
+        phonesValid.splice(index, 1)
+        user.phones.splice(index, 1)
+        this.setState({
+            user,
+            phonesValid,
+        })
     }
 
-    addNode(origin) {
-        origin.phones.push({
+    addNode() {
+        let user = Object.assign({}, this.state.user)
+        user.phones.push({
             number: '',
             type: '',
         })
 
-        this.setState({user: origin})
+        this.setState({user})
     }
 
-    phoneChangeHandler(e, i, origin) {
-        origin.phones[i].number = e.target.value;
-        this.setState({user: origin})
+    phoneChangeHandler(e, i) {
+        let user = Object.assign({}, this.state.user)
+        user.phones[i].number = e.target.value;
+        this.setState({user})
     }
 
-    selectHandler(e, i, origin) {
-        origin.phones[i].type = e.target.value;
-        this.setState({user: origin})
+    selectHandler(e, i) {
+        let user = Object.assign({}, this.state.user)
+        user.phones[i].type = e.target.value;
+        this.setState({user})
     }
 
     render() {
-        const user = Object.assign({}, this.state.user);
-
-        const phones = user.phones.map((elem, i) => {
+        const phones = this.state.user.phones.map((elem, i) => {
             return (
                 <div key={i} className="input-group mb-3">
-                    <Input valid={this.state.phonesValid[i]} type="text" className="form-control" value={elem.number || ''} onChange={(e) => {this.phoneChangeHandler(e, i, user)}}/>
-                    <select className="custom-select" defaultValue={elem.type || 'home'} onChange={(e) => {this.selectHandler(e, i, user)}}>
+                    <Input valid={this.state.phonesValid[i]} type="text" className="form-control" value={elem.number || ''} onChange={(e) => {this.phoneChangeHandler(e, i)}}/>
+                    <select className="custom-select" defaultValue={elem.type || 'home'} onChange={(e) => {this.selectHandler(e, i)}}>
                         <option value="home">Домашній</option>
                         <option value="mobile">Мобільний</option>
                     </select>
                     <div className="input-group-append">
-                        <button className="btn btn-outline-secondary" type="button" onClick={(e) => {this.removeNode(e, i, user)}}>Видалити</button>
+                        <button className="btn btn-outline-secondary" type="button" onClick={(e) => {this.removeNode(e, i)}}>Видалити</button>
                     </div>
                 </div>
             )
@@ -120,18 +126,18 @@ export default class UserForm extends PureComponent {
                 <form id="user-form" onSubmit={(e) => {e.preventDefault(); this.submitHandler()}}>
                     <div className="form-group">
                         <label>П.І.Б.</label>
-                        <Input valid={this.state.nameValid} type="text" name="full_name" className="form-control" id="name" value={user.name} onChange={(e) => {this.fieldChangeHandler(e, 'name', user)}}/>
+                        <Input valid={this.state.nameValid} type="text" name="full_name" className="form-control" id="name" value={this.state.user.name} onChange={(e) => {this.fieldChangeHandler(e, 'name')}}/>
                         <small className="form-text text-muted">Обовʼязково прізвище, імʼя та по батькові. Тільки літерами
                             українскього алфавіту</small>
                     </div>
                     <div className="form-group">
                         <label>Email</label>
-                        <Input valid={this.state.emailValid} type="text" name="email" className="form-control" id="email" value={user.email} onChange={(e) => {this.fieldChangeHandler(e, 'email', user)}}/>
+                        <Input valid={this.state.emailValid} type="text" name="email" className="form-control" id="email" value={this.state.user.email} onChange={(e) => {this.fieldChangeHandler(e, 'email')}}/>
                         <small className="form-text text-muted">Адреса електронної пошти</small>
                     </div>
                     <div className="form-group">
                         <label>Пароль</label>
-                        <Input valid={this.state.passwordValid} type="password" name="password" className="form-control" id="password" value={user.password} onChange={(e) => {this.fieldChangeHandler(e, 'password', user)}}/>
+                        <Input valid={this.state.passwordValid} type="password" name="password" className="form-control" id="password" value={this.state.user.password} onChange={(e) => {this.fieldChangeHandler(e, 'password')}}/>
                         <small className="form-text text-muted">Мінімум 8 літер. Обовʼязково повинні бути великі та малі
                             літери
                             англійського алфавіту та числа</small>
@@ -140,7 +146,7 @@ export default class UserForm extends PureComponent {
                     {phones}
 
                     <div className="add_phone mb-3">
-                        <button className="btn" type="button" onClick={() => {this.addNode(user)}}>Додати номер телефону</button>
+                        <button className="btn" type="button" onClick={() => {this.addNode()}}>Додати номер телефону</button>
                     </div>
 
                     <button type="submit" className="btn btn-primary">Submit</button>
