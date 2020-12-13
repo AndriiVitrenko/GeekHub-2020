@@ -839,72 +839,81 @@ var UserForm = /*#__PURE__*/function (_PureComponent) {
   _createClass(UserForm, [{
     key: "submitHandler",
     value: function submitHandler() {
-      var userData = Object.assign({}, this.state);
-      userData.nameValid = nameRule.test(userData.user.name);
-      userData.emailValid = emailRule.test(userData.user.email);
-      userData.passwordValid = passwordRule.test(userData.user.password);
-      userData.phonesValid = [];
+      var nameValid = nameRule.test(this.state.user.name);
+      var emailValid = emailRule.test(this.state.user.email);
+      var passwordValid = passwordRule.test(this.state.user.password);
+      var phonesValid = [];
 
-      for (var i = 0; i < userData.user.phones.length; i++) {
-        var phone = userData.user.phones[i];
+      for (var i = 0; i < this.state.user.phones.length; i++) {
+        var phone = this.state.user.phones[i];
 
         if (phone.type === 'home') {
-          userData.phonesValid.push(homePhoneRule.test(phone.number));
+          phonesValid.push(homePhoneRule.test(phone.number));
         } else if (phone.type === 'mobile' && (mobilePhoneRule1.test(phone.number) || mobilePhoneRule2.test(phone.number))) {
-          userData.phonesValid.push(true);
+          phonesValid.push(true);
         } else {
-          userData.phonesValid.push(false);
+          phonesValid.push(false);
         }
       }
 
-      userData.validated = true;
-      this.setState(userData);
+      this.setState({
+        user: this.state.user,
+        validated: true,
+        nameValid: nameValid,
+        emailValid: emailValid,
+        passwordValid: passwordValid,
+        phonesValid: phonesValid
+      });
     }
   }, {
     key: "fieldChangeHandler",
-    value: function fieldChangeHandler(e, fieldName, origin) {
-      origin[fieldName] = e.target.value;
+    value: function fieldChangeHandler(e, fieldName) {
+      var user = Object.assign({}, this.state.user);
+      user[fieldName] = e.target.value;
       this.setState({
-        user: origin
+        user: user
       });
     }
   }, {
     key: "removeNode",
-    value: function removeNode(event, index, origin) {
-      origin.phones.splice(index, 1);
+    value: function removeNode(event, index) {
+      var user = Object.assign({}, this.state.user);
+      var phonesValid = Array.from(this.state.phonesValid);
+      phonesValid.splice(index, 1);
+      user.phones.splice(index, 1);
       this.setState({
-        user: origin
+        user: user,
+        phonesValid: phonesValid
       });
-
-      if (this.state.validated) {
-        this.submitHandler();
-      }
     }
   }, {
     key: "addNode",
-    value: function addNode(origin) {
-      origin.phones.push({
+    value: function addNode() {
+      var user = Object.assign({}, this.state.user);
+      user.phones.push({
         number: '',
         type: ''
       });
       this.setState({
-        user: origin
+        user: user
       });
     }
   }, {
     key: "phoneChangeHandler",
-    value: function phoneChangeHandler(e, i, origin) {
-      origin.phones[i].number = e.target.value;
+    value: function phoneChangeHandler(e, i) {
+      var user = Object.assign({}, this.state.user);
+      user.phones[i].number = e.target.value;
       this.setState({
-        user: origin
+        user: user
       });
     }
   }, {
     key: "selectHandler",
-    value: function selectHandler(e, i, origin) {
-      origin.phones[i].type = e.target.value;
+    value: function selectHandler(e, i) {
+      var user = Object.assign({}, this.state.user);
+      user.phones[i].type = e.target.value;
       this.setState({
-        user: origin
+        user: user
       });
     }
   }, {
@@ -912,8 +921,7 @@ var UserForm = /*#__PURE__*/function (_PureComponent) {
     value: function render() {
       var _this2 = this;
 
-      var user = Object.assign({}, this.state.user);
-      var phones = user.phones.map(function (elem, i) {
+      var phones = this.state.user.phones.map(function (elem, i) {
         return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
           key: i,
           className: "input-group mb-3"
@@ -923,13 +931,13 @@ var UserForm = /*#__PURE__*/function (_PureComponent) {
           className: "form-control",
           value: elem.number || '',
           onChange: function onChange(e) {
-            _this2.phoneChangeHandler(e, i, user);
+            _this2.phoneChangeHandler(e, i);
           }
         }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("select", {
           className: "custom-select",
           defaultValue: elem.type || 'home',
           onChange: function onChange(e) {
-            _this2.selectHandler(e, i, user);
+            _this2.selectHandler(e, i);
           }
         }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("option", {
           value: "home"
@@ -941,7 +949,7 @@ var UserForm = /*#__PURE__*/function (_PureComponent) {
           className: "btn btn-outline-secondary",
           type: "button",
           onClick: function onClick(e) {
-            _this2.removeNode(e, i, user);
+            _this2.removeNode(e, i);
           }
         }, "\u0412\u0438\u0434\u0430\u043B\u0438\u0442\u0438")));
       });
@@ -962,9 +970,9 @@ var UserForm = /*#__PURE__*/function (_PureComponent) {
         name: "full_name",
         className: "form-control",
         id: "name",
-        value: user.name,
+        value: this.state.user.name,
         onChange: function onChange(e) {
-          _this2.fieldChangeHandler(e, 'name', user);
+          _this2.fieldChangeHandler(e, 'name');
         }
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("small", {
         className: "form-text text-muted"
@@ -976,9 +984,9 @@ var UserForm = /*#__PURE__*/function (_PureComponent) {
         name: "email",
         className: "form-control",
         id: "email",
-        value: user.email,
+        value: this.state.user.email,
         onChange: function onChange(e) {
-          _this2.fieldChangeHandler(e, 'email', user);
+          _this2.fieldChangeHandler(e, 'email');
         }
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("small", {
         className: "form-text text-muted"
@@ -990,9 +998,9 @@ var UserForm = /*#__PURE__*/function (_PureComponent) {
         name: "password",
         className: "form-control",
         id: "password",
-        value: user.password,
+        value: this.state.user.password,
         onChange: function onChange(e) {
-          _this2.fieldChangeHandler(e, 'password', user);
+          _this2.fieldChangeHandler(e, 'password');
         }
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("small", {
         className: "form-text text-muted"
@@ -1002,7 +1010,7 @@ var UserForm = /*#__PURE__*/function (_PureComponent) {
         className: "btn",
         type: "button",
         onClick: function onClick() {
-          _this2.addNode(user);
+          _this2.addNode();
         }
       }, "\u0414\u043E\u0434\u0430\u0442\u0438 \u043D\u043E\u043C\u0435\u0440 \u0442\u0435\u043B\u0435\u0444\u043E\u043D\u0443")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
         type: "submit",
