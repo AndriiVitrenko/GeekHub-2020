@@ -56,7 +56,6 @@ export default class UserForm extends PureComponent {
 
         this.setState(
             {
-                user: this.state.user,
                 validated: true,
                 nameValid,
                 emailValid,
