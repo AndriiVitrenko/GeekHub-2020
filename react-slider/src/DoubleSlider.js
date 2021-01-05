@@ -5,14 +5,10 @@ export default class DoubleSlider extends React.PureComponent {
     state = {
         min: this.props.min,
         max: this.props.max,
-        start: {
-            value: this.props.startValue,
-            left: this.props.startValue / (this.props.max - this.props.min) * 100
-        },
-        end: {
-            value: this.props.endValue,
-            left: this.props.endValue / (this.props.max - this.props.min) * 100
-        }
+        startValue: this.props.startValue,
+        startLeft: this.props.startValue / (this.props.max - this.props.min) * 100,
+        endValue: this.props.endValue,
+        endLeft: this.props.endValue / (this.props.max - this.props.min) * 100
     }
 
     barRef = React.createRef()
@@ -33,18 +29,16 @@ export default class DoubleSlider extends React.PureComponent {
         if (value <= this.state.min) {
             left = 0
         }
-        else if (value >= this.state.end.value) {
-            left = this.state.end.left - 10 / range * 100
+        else if (value >= this.state.endValue) {
+            left = this.state.endLeft - 10 / range * 100
         }
         else {
             left = (value - this.state.min) / range * 100
         }
 
         this.setState({
-            start: {
-                value,
-                left
-            }
+            startValue: value,
+            startLeft: left,
         })
 
         this.firstStart = 0;
@@ -58,18 +52,16 @@ export default class DoubleSlider extends React.PureComponent {
         if (value >= this.state.max) {
             left = 100
         }
-        else if (value <= this.state.start.value) {
-            left = this.state.start.left + 10 / range * 100
+        else if (value <= this.state.startValue) {
+            left = this.state.startLeft + 10 / range * 100
         }
         else {
             left = (value - this.state.min) / range * 100
         }
 
         this.setState({
-            end: {
-                value,
-                left
-            }
+            endValue: value,
+            endLeft: left,
         })
 
         this.lastStart = 0
@@ -101,18 +93,16 @@ export default class DoubleSlider extends React.PureComponent {
         if (x < 0) {
             x = 0
         }
-        else if (x >= this.state.end.left * width / 100 - 10) {
-            x = this.state.end.left * width / 100 - 10
+        else if (x >= this.state.endLeft * width / 100 - 10) {
+            x = this.state.endLeft * width / 100 - 10
         }
 
         let value = x / width * range + this.state.min
         let left = x / width * 100
 
         this.setState({
-            start: {
-                value,
-                left
-            }
+            startValue: value,
+            startLeft: left,
         })
     }
 
@@ -147,18 +137,16 @@ export default class DoubleSlider extends React.PureComponent {
         if (x > width) {
             x = width
         }
-        else if (x < this.state.start.left * width / 100 + 10) {
-            x = this.state.start.left * width / 100 + 10
+        else if (x < this.state.startLeft * width / 100 + 10) {
+            x = this.state.startLeft * width / 100 + 10
         }
 
         let value = x / width * range + this.state.min
         let left = x / width * 100
 
         this.setState({
-            end: {
-                value,
-                left
-            }
+            endValue: value,
+            endLeft: left,
         })
     }
 
@@ -171,10 +159,7 @@ export default class DoubleSlider extends React.PureComponent {
     }
 
     render() {
-        const startLeft = this.state.start.left;
-        const endLeft = this.state.end.left;
-        const startValue = this.state.start.value;
-        const endValue = this.state.end.value;
+        const {startLeft, startValue, endLeft, endValue} = this.state;
 
         return (
             <Root>
