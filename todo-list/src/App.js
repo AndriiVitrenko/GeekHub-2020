@@ -1,7 +1,8 @@
 import {useState} from 'react';
 import {TodoList} from "./components/TodoList";
 import {useDispatch, useSelector} from "react-redux";
-import {addTodo, changeAllStates, clearCompleted} from "./dataBase/toolkitSlice";
+import {addTodo, changeAllStates} from "./dataBase/toolkitSlice";
+import {Footer} from "./components/Footer";
 
 
 function App() {
@@ -31,30 +32,25 @@ function App() {
                 <section className="todoapp">
                     <header className="header">
                         <h1>todos</h1>
-                        <input className="new-todo" placeholder="What needs to be done?" autoFocus onKeyPress={keyPressHandler} />
+                        <input className="new-todo" type="text" placeholder="What needs to be done?" autoFocus onKeyPress={keyPressHandler} />
                     </header>
                     <section className="main">
-                        <input id="toggle-all" className="toggle-all" type="checkbox" checked={isMarked || (doneTodosAmount === todoList.length)} onChange={() => {}} />
+                        <input id="toggle-all" className="toggle-all" type="checkbox" checked={isMarked || (doneTodosAmount === todoList.length)} />
                         <label htmlFor="toggle-all" onClick={() => {setMarked(!isMarked); dispatch(changeAllStates(!isMarked))}} >Mark all as complete</label>
 
-                        <TodoList list = {todoList} filter = {currentFilter} />
+                        <TodoList
+                            list = {todoList}
+                            filter = {currentFilter}
+                        />
 
                     </section>
-                    <footer className="footer">
-                        <span className="todo-count"><strong>{todoList.length - doneTodosAmount}</strong> item left</span>
-                        <ul className="filters">
-                            <li>
-                                <a onClick={(e) => {filterHandler('all', e)}} className={currentFilter === 'all' ? 'selected' : ''} href='/'>All</a>
-                            </li>
-                            <li>
-                                <a onClick={(e) => {filterHandler('active', e)}} className={currentFilter === 'active' ? 'selected' : ''} href='/'>Active</a>
-                            </li>
-                            <li>
-                                <a onClick={(e) => {filterHandler('completed', e)}} className={currentFilter === 'completed' ? 'selected' : ''} href='/'>Completed</a>
-                            </li>
-                        </ul>
-                        {doneTodosAmount ? <button className="clear-completed" onClick = {() => dispatch(clearCompleted())}>Clear completed</button> : <></>}
-                    </footer>
+
+                    <Footer
+                        filterHandler={filterHandler}
+                        currentFilter={currentFilter}
+                        listLength={todoList.length}
+                        doneTodosAmount={doneTodosAmount}
+                    />
                 </section>
             </>
         );
