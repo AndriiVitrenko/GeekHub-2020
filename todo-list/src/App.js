@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState ,useCallback} from 'react';
 import {TodoList} from "./components/TodoList";
 import {useDispatch, useSelector} from "react-redux";
 import {addTodo, changeAllStates} from "./dataBase/toolkitSlice";
@@ -20,12 +20,18 @@ function App() {
         }
     }
 
-    const filterHandler = (filter, e) => {
-        e.preventDefault()
+    const filterHandler = (filter) => {
         if (filter !== currentFilter) {
             setFilter(filter)
         }
     }
+
+    const stateChanger = useCallback(
+        () => {
+            setMarked(!isMarked);
+            dispatch(changeAllStates(!isMarked))
+        }
+    , [isMarked, dispatch])
 
         return (
             <>
@@ -36,7 +42,7 @@ function App() {
                     </header>
                     <section className="main">
                         <input id="toggle-all" className="toggle-all" type="checkbox" checked={isMarked || (doneTodosAmount === todoList.length)} />
-                        <label htmlFor="toggle-all" onClick={() => {setMarked(!isMarked); dispatch(changeAllStates(!isMarked))}} >Mark all as complete</label>
+                        <label htmlFor="toggle-all" onClick={stateChanger} >Mark all as complete</label>
 
                         <TodoList
                             list = {todoList}

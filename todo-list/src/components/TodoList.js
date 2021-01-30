@@ -8,7 +8,7 @@ export const TodoList = (props) => {
             <ul className='todo-list'>
                 {list.map((todo, i) => {
                     if (filter === 'all' || (filter === 'active' && !todo.isDone) || (filter === 'completed' && todo.isDone)) {
-                        return <TodoItem item = {todo} index = {i} key = {i} />
+                       return <TodoItem item = {todo} index = {i} key = {i} />
                     }
                 })}
             </ul>
