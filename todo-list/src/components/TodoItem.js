@@ -13,12 +13,18 @@ export const TodoItem = (props) => {
         }
     , [index, dispatch])
 
+    const deleteHandler = useCallback(
+        () => {
+            dispatch(deleteItem(index))
+        }
+    , [index, dispatch])
+
     return(
         <li className={item.isDone ? 'completed' : ''}>
             <div className="view">
                 <input className="toggle" type="checkbox" checked={item.isDone} onChange={onChangeHandler} />
                 <label>{item.text}</label>
-                <button className="destroy" onClick={() => dispatch(deleteItem(index))}></button>
+                <button className="destroy" onClick={deleteHandler} />
             </div>
         </li>
     )
