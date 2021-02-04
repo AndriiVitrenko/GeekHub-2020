@@ -1,17 +1,18 @@
-import {useState ,useCallback} from 'react';
+import {useState, useCallback} from 'react';
 import {TodoList} from "./components/TodoList";
 import {useDispatch, useSelector} from "react-redux";
 import {addTodo, changeAllStates} from "./dataBase/toolkitSlice";
 import {Footer} from "./components/Footer";
-
 
 function App() {
     const todoList = useSelector(state => state.toolkit.list)
     const doneTodosAmount = todoList.filter(todo => todo.isDone === true).length;
     const dispatch = useDispatch()
 
-    const [currentFilter, setFilter] = useState('all')
-    const [isMarked, setMarked] = useState(false)
+    const [state, setState] = useState({
+        filter: 'all',
+        isMarked: false,
+    })
 
     const keyPressHandler = (e) => {
         if (e.key === 'Enter') {
@@ -21,17 +22,17 @@ function App() {
     }
 
     const filterHandler = (filter) => {
-        if (filter !== currentFilter) {
-            setFilter(filter)
+        if (filter !== state.filter) {
+            setState({filter})
         }
     }
 
     const stateChanger = useCallback(
         () => {
-            setMarked(!isMarked);
-            dispatch(changeAllStates(!isMarked))
+            setState({isMarked: !state.isMarked});
+            dispatch(changeAllStates(!state.isMarked))
         }
-    , [isMarked, dispatch])
+    , [state.isMarked])
 
         return (
             <>
@@ -41,19 +42,19 @@ function App() {
                         <input className="new-todo" type="text" placeholder="What needs to be done?" autoFocus onKeyPress={keyPressHandler} />
                     </header>
                     <section className="main">
-                        <input id="toggle-all" className="toggle-all" type="checkbox" checked={isMarked || (doneTodosAmount === todoList.length)} />
+                        <input id="toggle-all" className="toggle-all" type="checkbox" checked={state.isMarked || (doneTodosAmount === todoList.length)} />
                         <label htmlFor="toggle-all" onClick={stateChanger} >Mark all as complete</label>
 
                         <TodoList
                             list = {todoList}
-                            filter = {currentFilter}
+                            filter = {state.filter}
                         />
 
                     </section>
 
                     <Footer
                         filterHandler={filterHandler}
-                        currentFilter={currentFilter}
+                        currentFilter={state.filter}
                         listLength={todoList.length}
                         doneTodosAmount={doneTodosAmount}
                     />

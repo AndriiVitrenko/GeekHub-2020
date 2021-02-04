@@ -11,13 +11,13 @@ export const TodoItem = (props) => {
         () => {
             dispatch(changeItemState(index))
         }
-    , [index, dispatch])
+    , [index])
 
     const deleteHandler = useCallback(
         () => {
             dispatch(deleteItem(index))
         }
-    , [index, dispatch])
+    , [index])
 
     return(
         <li className={item.isDone ? 'completed' : ''}>
