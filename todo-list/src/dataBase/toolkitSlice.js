@@ -24,8 +24,11 @@ const toolkitSlice = createSlice({
         clearCompleted(state) {
             state.list = state.list.filter(elem => !elem.isDone)
         },
+        editItem(state, action) {
+            state.list[action.payload.index].text = action.payload.text
+        }
     }
 })
 
 export default toolkitSlice.reducer
-export const {addTodo, changeAllStates, changeItemState, deleteItem, clearCompleted} = toolkitSlice.actions
+export const {addTodo, changeAllStates, changeItemState, deleteItem, clearCompleted, editItem} = toolkitSlice.actions

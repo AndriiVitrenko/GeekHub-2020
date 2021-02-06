@@ -3,6 +3,7 @@ import {TodoList} from "./components/TodoList";
 import {useDispatch, useSelector} from "react-redux";
 import {addTodo, changeAllStates} from "./dataBase/toolkitSlice";
 import {Footer} from "./components/Footer";
+import {BrowserRouter as Router, Switch, Route} from "react-router-dom";
 
 function App() {
     const todoList = useSelector(state => state.toolkit.list)
@@ -12,6 +13,7 @@ function App() {
     const [state, setState] = useState({
         filter: 'all',
         isMarked: false,
+        isEditing: false,
     })
 
     const keyPressHandler = (e) => {
@@ -21,46 +23,66 @@ function App() {
         }
     }
 
-    const filterHandler = (filter) => {
-        if (filter !== state.filter) {
-            setState({filter})
-        }
-    }
-
     const stateChanger = useCallback(
         () => {
-            setState({isMarked: !state.isMarked});
-            dispatch(changeAllStates(!state.isMarked))
+            state.isMarked = !state.isMarked;
+            dispatch(changeAllStates(state.isMarked));
         }
     , [state.isMarked])
 
-        return (
-            <>
-                <section className="todoapp">
-                    <header className="header">
-                        <h1>todos</h1>
-                        <input className="new-todo" type="text" placeholder="What needs to be done?" autoFocus onKeyPress={keyPressHandler} />
-                    </header>
-                    <section className="main">
-                        <input id="toggle-all" className="toggle-all" type="checkbox" checked={state.isMarked || (doneTodosAmount === todoList.length)} />
-                        <label htmlFor="toggle-all" onClick={stateChanger} >Mark all as complete</label>
+    const switchEditing = (value) => {
+        if (state.isEditing !== value) {
+            setState({
+                isEditing: value,
+            })
+        }
+    }
 
-                        <TodoList
-                            list = {todoList}
-                            filter = {state.filter}
+    return (
+        <>
+            <section className="todoapp">
+                <header className="header">
+                    <h1>todos</h1>
+                    <input className="new-todo" type="text" placeholder="What needs to be done?" autoFocus={!state.isEditing}
+                           onKeyPress={keyPressHandler}/>
+                </header>
+                <section className="main">
+                    <input id="toggle-all" className="toggle-all" type="checkbox"
+                           checked={state.isMarked || (doneTodosAmount === todoList.length)} readOnly/>
+                    <label htmlFor="toggle-all" onClick={stateChanger}>Mark all as complete</label>
+
+                    <Router>
+                        <Switch>
+                            <Route exact path='/:params/edit'>
+                                <TodoList
+                                    list={todoList}
+                                    isEditing={true}
+                                    switchEditing={switchEditing}
+                                />
+                            </Route>
+
+                            <Route exact path="/:params">
+                                <TodoList
+                                    list={todoList}
+                                />
+                            </Route>
+
+                            <Route exact path='/'>
+                                <TodoList
+                                    list={todoList}
+                                />
+                            </Route>
+                        </Switch>
+
+                        <Footer
+                            listLength={todoList.length}
+                            doneTodosAmount={doneTodosAmount}
                         />
-
-                    </section>
-
-                    <Footer
-                        filterHandler={filterHandler}
-                        currentFilter={state.filter}
-                        listLength={todoList.length}
-                        doneTodosAmount={doneTodosAmount}
-                    />
+                    </Router>
                 </section>
-            </>
-        );
+            </section>
+        </>
+    );
 }
 
-export default App;
+export default App
