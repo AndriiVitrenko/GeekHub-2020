@@ -7,7 +7,6 @@ export const TodoList = (props) => {
         data: useParams().params || 'all',
         isEditing: !!useParams().isEditing,
     }
-    console.log(params)
 
     params.type = (params.data && params.data.includes(':')) ? 'id' : 'filter';
 
