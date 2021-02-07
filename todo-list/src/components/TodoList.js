@@ -4,20 +4,18 @@ import {useParams} from 'react-router-dom';
 export const TodoList = (props) => {
     const {list, switchEditing} = props;
     const params = {
-        data: useParams().params,
-        isEditing: props.isEditing,
+        data: useParams().params || 'all',
+        isEditing: !!useParams().isEditing,
     }
-    params.type = (params.data && params.data.includes(':')) ? 'id' : 'filter';
+    console.log(params)
 
-    if (params.isEditing) {
-        switchEditing(true)
-    }
+    params.type = (params.data && params.data.includes(':')) ? 'id' : 'filter';
 
     if (params.type === 'filter') {
         return(
             <ul className='todo-list'>
                 {list.map((todo, i) => {
-                    if (params.data === undefined || (params.data === 'active' && !todo.isDone) || (params.data === 'completed' && todo.isDone)) {
+                    if (params.data === 'all' || (params.data === 'active' && !todo.isDone) || (params.data === 'completed' && todo.isDone)) {
                         return <TodoItem item = {todo} index = {i} key = {i} />
                     }
                 })}
@@ -25,7 +23,7 @@ export const TodoList = (props) => {
         )
     }
     else if (params.type === 'id') {
-        params.data = Math.min(params.data.match(/\d+/)[0], list.length - 1)
+        params.data = Math.min(+params.data.match(/\d+/)[0], list.length - 1)
 
         return(
             <ul className='todo-list'>

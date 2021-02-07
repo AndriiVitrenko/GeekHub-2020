@@ -53,23 +53,10 @@ function App() {
 
                     <Router>
                         <Switch>
-                            <Route exact path='/:params/edit'>
+                            <Route exact path="/:params?/:isEditing?">
                                 <TodoList
                                     list={todoList}
-                                    isEditing={true}
                                     switchEditing={switchEditing}
-                                />
-                            </Route>
-
-                            <Route exact path="/:params">
-                                <TodoList
-                                    list={todoList}
-                                />
-                            </Route>
-
-                            <Route exact path='/'>
-                                <TodoList
-                                    list={todoList}
                                 />
                             </Route>
                         </Switch>
