@@ -1,13 +1,11 @@
 import {useDispatch} from "react-redux";
-import {useCallback, useState} from 'react';
+import {useCallback} from 'react';
 import {changeItemState, deleteItem, editItem} from '../dataBase/toolkitSlice';
 import {useHistory} from 'react-router-dom';
 
 export const TodoItem = (props) => {
-    const item = props.item;
-    const index = props.index;
-    const switchEditing = props.switchEditing;
-    const [isEditing, setIsEditing] = useState(props.isEditing);
+    const {item, index, isEditing} = props;
+
     const dispatch = useDispatch();
     const history = useHistory();
 
@@ -34,9 +32,7 @@ export const TodoItem = (props) => {
 
     const onBlurHandler = useCallback(
         () => {
-            setIsEditing(false)
             history.push(`/:${index}`)
-            switchEditing(false)
         }
     , [history, index])
 
@@ -44,7 +40,6 @@ export const TodoItem = (props) => {
         (event) => {
             if (event.key === 'Enter') {
                 onBlurHandler()
-                history.push(`/:${index}`)
             }
         }
     , [onBlurHandler])

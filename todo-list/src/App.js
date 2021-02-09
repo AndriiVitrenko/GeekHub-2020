@@ -10,18 +10,18 @@ function App() {
     const doneTodosAmount = todoList.filter(todo => todo.isDone === true).length;
     const dispatch = useDispatch()
 
-    const [state, setState] = useState({
+    const [state] = useState({
         filter: 'all',
         isMarked: false,
         isEditing: false,
     })
 
-    const keyPressHandler = (e) => {
+    const keyPressHandler = useCallback((e) => {
         if (e.key === 'Enter') {
             dispatch(addTodo(e.target.value))
             e.target.value = ''
         }
-    }
+    }, [])
 
     const stateChanger = useCallback(
         () => {
@@ -29,14 +29,6 @@ function App() {
             dispatch(changeAllStates(state.isMarked));
         }
     , [state.isMarked])
-
-    const switchEditing = (value) => {
-        if (state.isEditing !== value) {
-            setState({
-                isEditing: value,
-            })
-        }
-    }
 
     return (
         <>
@@ -53,10 +45,15 @@ function App() {
 
                     <Router>
                         <Switch>
-                            <Route exact path="/:params?/:isEditing?">
+                            <Route exact path='/:data([a-zA-z]+|:\d+)?' >
                                 <TodoList
                                     list={todoList}
-                                    switchEditing={switchEditing}
+                                />
+                            </Route>
+
+                            <Route exact path='/:data(:\d+)/:isEditing(edit)?' >
+                                <TodoList
+                                    list={todoList}
                                 />
                             </Route>
                         </Switch>

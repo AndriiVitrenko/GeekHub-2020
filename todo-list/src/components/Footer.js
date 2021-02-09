@@ -11,7 +11,7 @@ export function Footer(props) {
         () => {
             dispatch(clearCompleted())
         }
-    , [dispatch])
+    , [])
 
     return(
         <footer className="footer">
