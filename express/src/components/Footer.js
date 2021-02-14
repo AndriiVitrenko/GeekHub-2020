@@ -11,7 +11,8 @@ export function Footer(props) {
     const clearHandler = useCallback(
         () => {
             clearAllCompleted()
-            dispatch(clearCompleted())
+                .then(() => dispatch(clearCompleted()))
+
         }
     , [])
 

@@ -12,7 +12,9 @@ function App() {
     useEffect(
         () => {
             getTodoList()
-                .then(result => dispatch(setList({list: result.list})))
+                .then(result => {
+                    dispatch(setList({list: result.list}))
+                })
         }
     , [])
 
@@ -29,16 +31,18 @@ function App() {
         if (e.key === 'Enter') {
             const text = e.target.value;
             newTodo(text)
-            dispatch(addTodo(text));
-            e.target.value = ''
+                .then(() => {
+                    dispatch(addTodo(text));
+                    e.target.value = ''
+                })
         }
     }, [])
 
     const stateChanger = useCallback(
         () => {
             state.isMarked = !state.isMarked;
-            toggleAllItemsState(state.isMarked);
-            dispatch(changeAllStates(state.isMarked));
+            toggleAllItemsState(state.isMarked)
+                .then(() => dispatch(changeAllStates(state.isMarked)))
         }
     , [state.isMarked])
 

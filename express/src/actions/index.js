@@ -10,7 +10,7 @@ export const getTodoList = () => {
 }
 
 export const newTodo = (text) => {
-    fetch('/api/addTodo', {
+    return fetch('/api/addTodo', {
         method: 'POST',
         headers: {
             "X-Requested-With": "XMLHttpRequest",
@@ -21,7 +21,7 @@ export const newTodo = (text) => {
 }
 
 export const toggleItemState = (index) => {
-    fetch('/api/changeItemState', {
+    return fetch('/api/changeItemState', {
         method: 'PUT',
         headers: {
             "X-Requested-With": "XMLHttpRequest",
@@ -32,7 +32,7 @@ export const toggleItemState = (index) => {
 }
 
 export const toggleAllItemsState = (state) => {
-    fetch('/api/changeAllStates', {
+    return fetch('/api/changeAllStates', {
         method: 'POST',
         headers: {
             "X-Requested-With": "XMLHttpRequest",
@@ -43,7 +43,7 @@ export const toggleAllItemsState = (state) => {
 }
 
 export const deleteOneItem = (index) => {
-    fetch('/api/deleteItem', {
+    return fetch('/api/deleteItem', {
         method: 'DELETE',
         headers: {
             "X-Requested-With": "XMLHttpRequest",
@@ -54,7 +54,7 @@ export const deleteOneItem = (index) => {
 }
 
 export const clearAllCompleted = () => {
-    fetch('/api/clearCompleted', {
+    return fetch('/api/clearCompleted', {
         method: 'POST',
         headers: {
             "X-Requested-With": "XMLHttpRequest",
@@ -64,7 +64,7 @@ export const clearAllCompleted = () => {
 }
 
 export const editItemText = ({index, text}) => {
-    fetch('/api/editItem', {
+    return fetch('/api/editItem', {
         method: 'PUT',
         headers: {
             "X-Requested-With": "XMLHttpRequest",
