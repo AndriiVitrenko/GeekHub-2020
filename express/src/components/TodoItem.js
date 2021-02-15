@@ -13,14 +13,22 @@ export const TodoItem = (props) => {
     const onChangeHandler = useCallback(
         () => {
             toggleItemState(index)
-                .then(() => dispatch(changeItemState(index)))
+                .then((res) => {
+                    if (res.ok) {
+                        dispatch(changeItemState(index))
+                    }
+                })
         }
     , [index])
 
     const deleteHandler = useCallback(
         () => {
             deleteOneItem(index)
-                .then(() => dispatch(deleteItem(index)))
+                .then((res) => {
+                    if (res.ok) {
+                        dispatch(deleteItem(index))
+                    }
+                })
         }
     , [index])
 
@@ -30,10 +38,14 @@ export const TodoItem = (props) => {
                 index,
                 text: event.target.value,
             })
-                .then(() => dispatch(editItem({
-                    text: event.target.value,
-                    index
-                })))
+                .then((res) => {
+                    if (res.ok) {
+                        dispatch(editItem({
+                            text: event.target.value,
+                            index
+                        }))
+                    }
+                })
 
         }
     , [index])

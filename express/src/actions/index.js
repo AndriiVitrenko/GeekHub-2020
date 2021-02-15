@@ -6,7 +6,11 @@ export const getTodoList = () => {
             'Content-Type': 'application/json',
         }
     })
-        .then(res => res.json())
+        .then(res => {
+            if (res.ok) {
+                return res.json()
+            }
+        })
 }
 
 export const newTodo = (text) => {

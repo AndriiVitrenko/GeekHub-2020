@@ -7,7 +7,7 @@ const toolkitSlice = createSlice({
     },
     reducers: {
         setList(state, action) {
-          state.list = action.payload.list;
+          state.list = action.payload.list || state.list;
         },
         addTodo(state, action) {
             state.list.unshift({text: action.payload, isDone: false});
