@@ -1,79 +1,52 @@
 export const getTodoList = () => {
-    return fetch('/api/all', {
-        method: 'GET',
-        headers: {
-            "X-Requested-With": "XMLHttpRequest",
-            'Content-Type': 'application/json',
-        }
-    })
+    return fetchFunction('/api/all', 'GET')
         .then(res => {
-            if (res.ok) {
-                return res.json()
-            }
+            return res
         })
+        .catch(error => console.error(error))
 }
 
 export const newTodo = (text) => {
-    return fetch('/api/addTodo', {
-        method: 'POST',
-        headers: {
-            "X-Requested-With": "XMLHttpRequest",
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({text})
-    })
+    return fetchFunction('/api/addTodo', 'POST', JSON.stringify({text}))
+        .catch(error => console.error(error))
 }
 
 export const toggleItemState = (index) => {
-    return fetch('/api/changeItemState', {
-        method: 'PUT',
-        headers: {
-            "X-Requested-With": "XMLHttpRequest",
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({index})
-    })
+    return fetchFunction('/api/changeItemState', 'PUT', JSON.stringify({index}))
+        .catch(error => console.error(error))
 }
 
 export const toggleAllItemsState = (state) => {
-    return fetch('/api/changeAllStates', {
-        method: 'POST',
-        headers: {
-            "X-Requested-With": "XMLHttpRequest",
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({state})
-    })
+    return fetchFunction('/api/changeAllStates', 'POST', JSON.stringify({state}))
+        .catch(error => console.error(error))
 }
 
 export const deleteOneItem = (index) => {
-    return fetch('/api/deleteItem', {
-        method: 'DELETE',
-        headers: {
-            "X-Requested-With": "XMLHttpRequest",
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({index})
-    })
+    return fetchFunction('/api/deleteItem', 'DELETE', JSON.stringify({index}))
+        .catch(error => console.error(error))
 }
 
 export const clearAllCompleted = () => {
-    return fetch('/api/clearCompleted', {
-        method: 'POST',
-        headers: {
-            "X-Requested-With": "XMLHttpRequest",
-            'Content-Type': 'application/json',
-        }
-    })
+    return fetchFunction('/api/clearCompleted', 'POST')
+        .catch(error => console.error(error))
 }
 
 export const editItemText = ({index, text}) => {
-    return fetch('/api/editItem', {
-        method: 'PUT',
-        headers: {
-            "X-Requested-With": "XMLHttpRequest",
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({index, text})
+    return fetchFunction('/api/editItem', 'PUT', JSON.stringify({index, text}))
+        .catch(error => console.error(error))
+}
+
+function fetchFunction(url, method, body = undefined) {
+    return new Promise((res, rej) => {
+        fetch(url, {
+            method,
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                'Content-Type': 'application/json',
+            },
+            body
+        })
+            .then((response) => res(response.json()))
+            .catch(error => rej(error))
     })
 }

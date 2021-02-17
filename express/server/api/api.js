@@ -39,6 +39,11 @@ router.post('/addTodo', (req, res) => {
                 .then(() => res.json({
                     message: 'OK'
                 }))
+                .catch(error => {
+                    res.status(500).json({
+                        message: 'Server error',
+                    })
+                })
         })
         .catch(error => {
             res.status(500).json({
@@ -59,6 +64,11 @@ router.put('/changeItemState', (req, res) => {
 
             fs.writeFile(path.resolve(__dirname, '../todo.json'), JSON.stringify(list))
                 .then(() => res.json({message: 'OK'}))
+                .catch(error => {
+                    res.status(500).json({
+                        message: 'Server error',
+                    })
+                })
         })
         .catch(error => {
             res.status(500).json({
@@ -78,6 +88,11 @@ router.post('/changeAllStates', (req, res) => {
 
             fs.writeFile(path.resolve(__dirname, '../todo.json'), JSON.stringify(list))
                 .then(() => res.json({message: 'OK'}))
+                .catch(error => {
+                    res.status(500).json({
+                        message: 'Server error',
+                    })
+                })
         })
         .catch(error => {
             res.status(500).json({
@@ -98,6 +113,11 @@ router.delete('/deleteItem', (req, res) => {
 
             fs.writeFile(path.resolve(__dirname, '../todo.json'), JSON.stringify(list))
                 .then(() => res.json({message: 'OK'}))
+                .catch(error => {
+                    res.status(500).json({
+                        message: 'Server error',
+                    })
+                })
         })
         .catch(error => {
             res.status(500).json({
@@ -116,6 +136,11 @@ router.post('/clearCompleted', (req, res) => {
 
             fs.writeFile(path.resolve(__dirname, '../todo.json'), JSON.stringify(list))
                 .then(() => res.json({message: 'OK'}))
+                .catch(error => {
+                    res.status(500).json({
+                        message: 'Server error',
+                    })
+                })
         })
         .catch(error => {
             res.status(500).json({
@@ -135,6 +160,11 @@ router.put('/editItem', (req, res) => {
 
                fs.writeFile(path.resolve(__dirname, '../todo.json'), JSON.stringify(list))
                    .then(() => res.json({message: 'OK'}))
+                   .catch(error => {
+                       res.status(500).json({
+                           message: 'Server error',
+                       })
+                   })
            })
            .catch(error => {
                res.status(500).json({

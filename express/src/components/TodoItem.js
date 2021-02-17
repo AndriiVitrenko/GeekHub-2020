@@ -13,40 +13,25 @@ export const TodoItem = (props) => {
     const onChangeHandler = useCallback(
         () => {
             toggleItemState(index)
-                .then((res) => {
-                    if (res.ok) {
-                        dispatch(changeItemState(index))
-                    }
-                })
+                .then(() => dispatch(changeItemState(index)))
         }
     , [index])
 
     const deleteHandler = useCallback(
         () => {
             deleteOneItem(index)
-                .then((res) => {
-                    if (res.ok) {
-                        dispatch(deleteItem(index))
-                    }
-                })
+                .then(() => dispatch(deleteItem(index)))
         }
     , [index])
 
     const itemChangeHandler = useCallback(
         (event) => {
-            editItemText({
+            const body = {
                 index,
                 text: event.target.value,
-            })
-                .then((res) => {
-                    if (res.ok) {
-                        dispatch(editItem({
-                            text: event.target.value,
-                            index
-                        }))
-                    }
-                })
-
+            }
+            editItemText(body)
+                .then(() => dispatch(editItem(body)))
         }
     , [index])
 
