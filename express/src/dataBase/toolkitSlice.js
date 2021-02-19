@@ -4,6 +4,7 @@ const toolkitSlice = createSlice({
     name: 'todolist',
     initialState: {
         list: [],
+        error: null,
     },
     reducers: {
         setList(state, action) {
@@ -26,7 +27,10 @@ const toolkitSlice = createSlice({
         },
         editItem(state, action) {
             state.list[action.payload.index].text = action.payload.text
-        }
+        },
+        setError(state, action) {
+            state.error = action.payload;
+        },
     }
 })
 
@@ -38,4 +42,5 @@ export const {
     changeItemState,
     deleteItem,
     clearCompleted,
-    editItem} = toolkitSlice.actions
+    editItem,
+    setError,} = toolkitSlice.actions

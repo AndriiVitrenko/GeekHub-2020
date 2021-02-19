@@ -80,6 +80,14 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+.error-text {
+  font-size: 22px;
+  text-align: center;
+  color: red;
+  padding: 25px 0 9px;
+  margin: 0;
+}
+
 .new-todo,
 .edit {
   position: relative;

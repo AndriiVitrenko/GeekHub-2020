@@ -1,6 +1,6 @@
 import {useDispatch} from "react-redux";
 import {useCallback} from 'react';
-import {changeItemState, deleteItem, editItem} from '../dataBase/toolkitSlice';
+import {changeItemState, deleteItem, editItem, setError} from '../dataBase/toolkitSlice';
 import {useHistory} from 'react-router-dom';
 import {toggleItemState, deleteOneItem, editItemText} from "../actions";
 
@@ -13,14 +13,30 @@ export const TodoItem = (props) => {
     const onChangeHandler = useCallback(
         () => {
             toggleItemState(index)
-                .then(() => dispatch(changeItemState(index)))
+                .then(res => {
+                    if (res instanceof Error) {
+                        dispatch(setError(res))
+                    }
+                    else {
+                        dispatch(setError(null))
+                        dispatch(changeItemState(index))
+                    }
+                })
         }
     , [index])
 
     const deleteHandler = useCallback(
         () => {
             deleteOneItem(index)
-                .then(() => dispatch(deleteItem(index)))
+                .then(res => {
+                    if (res instanceof Error) {
+                        dispatch(setError(res))
+                    }
+                    else {
+                        dispatch(setError(null))
+                        dispatch(deleteItem(index))
+                    }
+                })
         }
     , [index])
 
@@ -31,7 +47,15 @@ export const TodoItem = (props) => {
                 text: event.target.value,
             }
             editItemText(body)
-                .then(() => dispatch(editItem(body)))
+                .then(res => {
+                    if (res instanceof Error) {
+                        dispatch(setError(res))
+                    }
+                    else {
+                        dispatch(setError(null))
+                        dispatch(editItem(body))
+                    }
+                })
         }
     , [index])
 
