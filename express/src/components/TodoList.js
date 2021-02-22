@@ -11,7 +11,7 @@ export const TodoList = (props) => {
             <ul className='todo-list'>
                 {list.map((todo, i) => {
                     if (params.data === undefined || (params.data === 'active' && !todo.isDone) || (params.data === 'completed' && todo.isDone)) {
-                        return <TodoItem item = {todo} index = {i} key = {i} />
+                        return <TodoItem item = {todo} index = {i} key = {todo.index} />
                     }
                 })}
             </ul>
