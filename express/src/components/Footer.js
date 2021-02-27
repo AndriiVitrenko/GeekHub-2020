@@ -1,4 +1,4 @@
-import {clearCompleted} from "../dataBase/toolkitSlice";
+import {fetchCleared} from "../dataBase/toolkitSlice";
 import {useDispatch} from "react-redux";
 import {useCallback} from 'react';
 import {NavLink} from "react-router-dom";
@@ -9,7 +9,7 @@ export function Footer(props) {
 
     const clearHandler = useCallback(
         () => {
-            dispatch(clearCompleted())
+            dispatch(fetchCleared())
         }
     , [])
 

@@ -1,6 +1,6 @@
 import {useDispatch} from "react-redux";
 import {useCallback} from 'react';
-import {changeItemState, deleteItem, editItem} from '../dataBase/toolkitSlice';
+import {fetchItemState, fetchDeletedItem, fetchEditedItem} from '../dataBase/toolkitSlice';
 import {useHistory} from 'react-router-dom';
 
 export const TodoItem = (props) => {
@@ -11,13 +11,13 @@ export const TodoItem = (props) => {
 
     const onChangeHandler = useCallback(
         () => {
-            dispatch(changeItemState(index))
+            dispatch(fetchItemState(index))
         }
     , [index])
 
     const deleteHandler = useCallback(
         () => {
-            dispatch(deleteItem(index))
+            dispatch(fetchDeletedItem(index))
         }
     , [index])
 
@@ -28,7 +28,7 @@ export const TodoItem = (props) => {
                 index,
                 text,
             }
-            dispatch(editItem(body))
+            dispatch(fetchEditedItem(body))
         }
     , [index])
 
@@ -50,18 +50,18 @@ export const TodoItem = (props) => {
         <li className={(item.isDone ? 'completed ' : '') + (isEditing ? 'editing ' : '')}>
             <div className='view'>
                 {
-                    !item.unSaved ? <input className="toggle" type="checkbox" checked={item.isDone} onChange={onChangeHandler} />
+                    !item.hasOwnProperty('unSaved') ? <input className="toggle" type="checkbox" checked={item.isDone} onChange={onChangeHandler} />
                     : <input className="toggle" type="checkbox" checked={item.isDone} readOnly />
                 }
                 <label>{item.text}</label>
                 {
-                    !item.unSaved ? <button className="destroy" onClick={deleteHandler} />
+                    !item.hasOwnProperty('unSaved') ? <button className="destroy" onClick={deleteHandler} />
                     : <button className="destroy"/>
                 }
             </div>
 
             {
-                !item.unSaved ? <input type="text" className='edit' autoFocus={isEditing} value={item.text} onChange={itemChangeHandler} onBlur={onBlurHandler} onKeyPress={onKeyPressHandler} />
+                !item.hasOwnProperty('unSaved') ? <input type="text" className='edit' autoFocus={isEditing} value={item.text} onChange={itemChangeHandler} onBlur={onBlurHandler} onKeyPress={onKeyPressHandler} />
                 : <></>
             }
         </li>

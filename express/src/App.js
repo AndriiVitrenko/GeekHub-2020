@@ -1,9 +1,24 @@
 import {useState, useCallback, useEffect} from 'react';
 import {TodoList} from "./components/TodoList";
 import {useDispatch, useSelector} from "react-redux";
-import {setConnection, sendTodo, sendUnSavedText, changeAllStates} from "./dataBase/toolkitSlice";
+import {
+    sendTodo,
+    sendUnSavedText,
+    getList,
+    fetchAllStates,
+    changeAllStates,
+    setList,
+    setError,
+    addTodo,
+    deleteItem,
+    setUnsavedTodo,
+    changeItemState,
+    clearCompleted,
+    editItem,
+} from "./dataBase/toolkitSlice";
 import {Footer} from "./components/Footer";
 import {BrowserRouter as Router, Switch, Route} from "react-router-dom";
+import socket from './socket';
 
 function App() {
     const dispatch = useDispatch()
@@ -13,34 +28,70 @@ function App() {
     const doneTodosAmount = todoList.filter(todo => todo.isDone === true).length;
 
     const [state] = useState({
-        filter: 'all',
-        isMarked: todoList.filter(item => item.isDone === true).length === todoList.length,
+        isMarked: todoList.filter(item => item.isDone === true).length === todoList.length
+        || todoList.filter(item => item.isDone === true).length === 0,
         isEditing: false,
         isTyping: false,
     })
 
     useEffect(() => {
-            dispatch(setConnection('127.0.0.1:8000'))
-        }
-        , [])
+        socket.on('list', ({list}) => {
+            dispatch(setList({list}))
+        })
+
+        socket.on('item:added', ({text}) => {
+            dispatch(addTodo(text))
+        })
+
+        socket.on('item:unSaved', ({text}) => {
+            dispatch(setUnsavedTodo(text))
+        })
+
+        socket.on('item:changedState', ({index}) => {
+            dispatch(changeItemState(index))
+        })
+
+        socket.on('item:deleted', ({index}) => {
+            dispatch(deleteItem(index))
+        })
+
+        socket.on('list:changedAllStates', ({state}) => {
+            dispatch(changeAllStates(state))
+        })
+
+        socket.on('list:cleared', () => {
+            dispatch(clearCompleted())
+        })
+
+        socket.on('item:edited', ({index, text}) => {
+            dispatch(editItem({index, text}))
+        })
+
+        socket.on('error', ({error}) => {
+            dispatch(setError(error))
+        })
+
+        dispatch(getList())
+    }
+    , [dispatch])
 
     const keyPressHandler = useCallback((e) => {
         if (e.key === 'Enter' && e.target.value) {
-            state.isTyping = false
+            state.isTyping = false;
             dispatch(sendTodo(e.target.value))
             e.target.value = ''
         }
     }, [])
 
     const onChangeHandler = useCallback((e) => {
-        state.isTyping = true
+        state.isTyping = true;
         dispatch(sendUnSavedText(e.target.value))
     }, [])
 
     const stateChanger = useCallback(
         () => {
             state.isMarked = !state.isMarked;
-            dispatch(changeAllStates(state.isMarked))
+            dispatch(fetchAllStates(state.isMarked))
         }
         , [state.isMarked])
 
@@ -63,13 +114,13 @@ function App() {
                         <Switch>
                             <Route exact path='/:data([a-zA-z]+|:\d+)?'>
                                 <TodoList
-                                    list={todoList}
+                                    list={!state.isTyping ? todoList : todoList.filter(item => !item.hasOwnProperty('unSaved'))}
                                 />
                             </Route>
 
                             <Route exact path='/:data(:\d+)/:isEditing(edit)?'>
                                 <TodoList
-                                    list={todoList}
+                                    list={!state.isTyping ? todoList : todoList.filter(item => !item.hasOwnProperty('unSaved'))}
                                 />
                             </Route>
                         </Switch>
