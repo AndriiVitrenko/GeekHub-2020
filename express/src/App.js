@@ -35,10 +35,6 @@ function App() {
     })
 
     useEffect(() => {
-        socket.on('list', ({list}) => {
-            dispatch(setList({list}))
-        })
-
         socket.on('item:added', ({text}) => {
             dispatch(addTodo(text))
         })
@@ -65,10 +61,6 @@ function App() {
 
         socket.on('item:edited', ({index, text}) => {
             dispatch(editItem({index, text}))
-        })
-
-        socket.on('error', ({error}) => {
-            dispatch(setError(error))
         })
 
         dispatch(getList())
@@ -100,7 +92,7 @@ function App() {
             <section className="todoapp">
                 <header className="header">
                     <h1>todos</h1>
-                    {error ? <p className='error-text'>{error}</p> : <></>}
+                    {!!error && <p className='error-text'>{error}</p>}
                     <input className="new-todo" type="text" placeholder="What needs to be done?"
                            autoFocus={!state.isEditing}
                            onChange={onChangeHandler} onKeyPress={keyPressHandler}/>

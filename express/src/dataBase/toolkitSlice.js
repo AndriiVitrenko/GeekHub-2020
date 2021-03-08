@@ -63,42 +63,86 @@ const toolkitSlice = createSlice({
 
 export const getList = () => (dispatch) => {
     fetchFunction('/api/getList', 'GET')
-        .catch(error => dispatch(setError(error)))
+        .then(res => res.json())
+        .then(res => {
+            if (res.hasOwnProperty('error')) {
+                dispatch(setError(res.error))
+            }
+            else {
+                dispatch(setList({list: res.list}))
+            }
+        })
+        .catch(error => dispatch(setError(error.message)))
 }
 
 export const sendTodo = (text) => (dispatch) => {
     fetchFunction(`/api/addTodo`, 'POST', {text})
-        .catch(error => dispatch(setError(error)))
+        .then(res => {
+            if (!res.ok) {
+                dispatch(setError('Server error'))
+            }
+        })
+        .catch(error => dispatch(setError(error.message)))
 }
 
 export const sendUnSavedText = (text) => (dispatch) => {
     fetchFunction(`/api/unSavedText`, 'POST', {text})
-        .catch(error => dispatch(setError(error)))
+        .then(res => {
+            if (!res.ok) {
+                dispatch(setError('Server error'))
+            }
+        })
+        .catch(error => dispatch(setError(error.message)))
 }
 
 export const fetchAllStates = (state) => (dispatch) => {
     fetchFunction(`/api/changeAllStates`, 'POST', {state})
-        .catch(error => dispatch(setError(error)))
+        .then(res => {
+            if (!res.ok) {
+                dispatch(setError('Server error'))
+            }
+        })
+        .catch(error => dispatch(setError(error.message)))
 }
 
 export const fetchDeletedItem = (index) => (dispatch) => {
     fetchFunction(`/api/deleteItem`, 'POST', {index})
-        .catch(error => dispatch(setError(error)))
+        .then(res => {
+            if (!res.ok) {
+                dispatch(setError('Server error'))
+            }
+        })
+        .catch(error => dispatch(setError(error.message)))
 }
 
 export const fetchItemState = (index) => (dispatch) => {
     fetchFunction(`/api/changeItemState`, 'PUT', {index})
-        .catch(error => dispatch(setError(error)))
+        .then(res => {
+            if (!res.ok) {
+                dispatch(setError('Server error'))
+            }
+        })
+        .catch(error => dispatch(setError(error.message)))
 }
 
 export const fetchEditedItem = ({index, text}) => (dispatch) => {
     fetchFunction(`/api/editItem`, 'PUT', {index, text})
-        .catch(error => dispatch(setError(error)))
+        .then(res => {
+            if (!res.ok) {
+                dispatch(setError('Server error'))
+            }
+        })
+        .catch(error => dispatch(setError(error.message)))
 }
 
 export const fetchCleared = () => (dispatch) => {
     fetchFunction(`/api/clearCompleted`, 'POST')
-        .catch(error => dispatch(setError(error)))
+        .then(res => {
+            if (!res.ok) {
+                dispatch(setError('Server error'))
+            }
+        })
+        .catch(error => dispatch(setError(error.message)))
 }
 
 export default toolkitSlice.reducer

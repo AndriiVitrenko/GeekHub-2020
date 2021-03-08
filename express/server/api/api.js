@@ -13,15 +13,18 @@ router.post('/clearCompleted', (req, res) => {
             list.forEach((item, index) => item.index = index)
 
             fs.writeFile(path.resolve(__dirname, '../todo.json'), JSON.stringify(list))
-                .then(() => io.emit('list:cleared'))
+                .then(() => {
+                    io.emit('list:cleared')
+                    res.end()
+                })
                 .catch(error => {
-                    io.emit('error', {
+                    res.status(500).json( {
                         error: error.message,
                     })
                 })
         })
         .catch(error => {
-            io.emit('error', {
+            res.status(500).json( {
                 error: error.message,
             })
         })
@@ -31,14 +34,14 @@ router.get('/getList', (req, res) => {
     fs.readFile(path.resolve(__dirname, '../todo.json'))
         .then(result => {
             const list = JSON.parse(result)
-            io.emit('list', {list})
-            res.end()
+            res.json({
+                list,
+            })
         })
         .catch(error => {
-            io.emit('error', {
+            res.status(500).json( {
                 error: error.message,
             })
-            res.end()
         })
 })
 
@@ -67,16 +70,15 @@ router.post('/addTodo', (req, res) =>{
                     res.end()
                 })
                 .catch(error => {
-                    io.emit('error', {
+                    res.status(500).json( {
                         error: error.message,
                     })
                 })
         })
         .catch(error => {
-            io.emit('error', {
+            res.status(500).json( {
                 error: error.message,
             })
-            res.end()
         })
 })
 
@@ -97,16 +99,15 @@ router.put('/changeItemState', (req, res) => {
                     res.end()
                 })
                 .catch(error => {
-                    io.emit('error', {
+                    res.status(500).json( {
                         error: error.message,
                     })
                 })
         })
         .catch(error => {
-            io.emit('error', {
+            res.status(500).json( {
                 error: error.message,
             })
-            res.end()
         })
 })
 
@@ -127,16 +128,15 @@ router.post('/deleteItem', (req, res) => {
                     res.end()
                 })
                 .catch(error => {
-                    io.emit('error', {
+                    res.status(500).json( {
                         error: error.message,
                     })
                 })
         })
         .catch(error => {
-            io.emit('error', {
+            res.status(500).json( {
                 error: error.message,
             })
-            res.end()
         })
 })
 
@@ -157,16 +157,15 @@ router.post('/changeAllStates', (req, res) => {
                     res.end()
                 })
                 .catch(error => {
-                    io.emit('error', {
+                    res.status(500).json( {
                         error: error.message,
                     })
                 })
         })
         .catch(error => {
-            io.emit('error', {
+            res.status(500).json( {
                 error: error.message,
             })
-            res.end()
         })
 })
 
@@ -201,16 +200,15 @@ router.post('/unSavedText', (req, res) => {
                     res.end()
                 })
                 .catch(error => {
-                    io.emit('error', {
+                    res.status(500).json( {
                         error: error.message,
                     })
                 })
         })
         .catch(error => {
-            io.emit('error', {
+            res.status(500).json( {
                 error: error.message,
             })
-            res.end()
         })
 })
 
@@ -232,16 +230,15 @@ router.put('/editItem', (req, res) => {
                     res.end()
                 })
                 .catch(error => {
-                    io.emit('error', {
+                    res.status(500).json( {
                         error: error.message,
                     })
                 })
         })
         .catch(error => {
-            io.emit('error', {
+            res.status(500).json( {
                 error: error.message,
             })
-            res.end()
         })
 })
 
