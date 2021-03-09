@@ -42,6 +42,10 @@ export const TodoItem = (props) => {
         (event) => {
             if (event.key === 'Enter') {
                 onBlurHandler()
+
+                if (!event.target.value) {
+                    dispatch(fetchDeletedItem(index))
+                }
             }
         }
     , [onBlurHandler])

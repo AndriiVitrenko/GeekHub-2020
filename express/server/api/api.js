@@ -120,6 +120,8 @@ router.post('/deleteItem', (req, res) => {
 
             list.splice(index, 1)
 
+            list.forEach((item, index) => item.index = index)
+
             fs.writeFile(path.resolve(__dirname, '../todo.json'), JSON.stringify(list))
                 .then(() => {
                     io.emit('item:deleted', {

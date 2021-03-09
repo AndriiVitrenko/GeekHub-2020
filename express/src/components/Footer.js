@@ -1,11 +1,12 @@
 import {fetchCleared} from "../dataBase/toolkitSlice";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useCallback} from 'react';
 import {NavLink} from "react-router-dom";
 
-export function Footer(props) {
+export function Footer() {
     const dispatch = useDispatch()
-    const {listLength, doneTodosAmount} = props;
+    const listLength = useSelector(state => state.toolkit.list.length)
+    const doneTodosAmount = useSelector(state => state.toolkit.list.filter(item => item.isDone === true).length)
 
     const clearHandler = useCallback(
         () => {
