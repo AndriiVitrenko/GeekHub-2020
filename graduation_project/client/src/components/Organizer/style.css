@@ -1,0 +1,64 @@
+.organizer {
+    display: block;
+    margin-top: 4rem;
+    border: 2px solid hsl(0, 0%, 50%);
+    border-radius: 5px;
+    padding: 1rem;
+}
+
+.organizer header {
+    margin-bottom: 1rem;
+}
+
+.organizer .save,
+.organizer .cancel,
+.organizer .delete {
+    margin-right: 2rem;
+    margin-top: 1rem;
+}
+
+.organizer .delete {
+    background-color: hsl(355, 78%, 57%);
+}
+.organizer .delete:hover {
+    background-color: hsl(355, 78%, 50%);
+}
+
+.organizer .save {
+    background-color: hsl(203, 85%, 54%);
+}
+.organizer .save:hover {
+    background-color: hsl(203, 85%, 50%);
+}
+
+.organizer .task {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border: 2px solid #ccc;
+    margin-bottom: 0.5rem;
+    border-radius: 5px;
+}
+.organizer .task strong {
+    margin-right: 0.5rem;
+}
+
+.organizer .edit {
+    margin-left: auto;
+    margin-right: 2rem;
+}
+
+.organizer .start_time,
+.organizer .end_time {
+    width: 45%;
+}
+
+.organizer .start_time {
+    margin-right: 10%;
+}
+
+.organizer h4 {
+    text-align: center;
+    margin-bottom: 0;
+}

@@ -4,18 +4,6 @@ document.querySelector('#user-form').addEventListener('submit', function(e) {
     let name = document.querySelector('[name=full_name]')
     let email = document.querySelector('[name=email]')
     let password = document.querySelector('[name=password]')
-
-    /*if (password.value.length < 8) {
-        password.style.background = '#F9D0C4'
-    }
-    else {
-        if (password.value.match(/[A-Z]+/) && password.value.match(/[a-z]+/) && password.value.match(/[0-9]+/)) {
-            password.style.background = '#C2E0C6'
-        }
-        else {
-            password.style.background = '#F9D0C4'
-        }
-    }*/
     
     let fields = [
         name,

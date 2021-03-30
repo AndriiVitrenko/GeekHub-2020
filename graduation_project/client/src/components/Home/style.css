@@ -1,0 +1,41 @@
+.container table {
+    width: 100%;
+    margin-top: 2rem;
+    border-collapse: collapse;
+    height: 100%;
+}
+.container table tbody {
+    height: 100%;
+    overflow: auto;
+}
+
+td,
+th {
+    border: 1px solid #333;
+    padding: 0;
+}
+
+th {
+    padding: 0.75rem 1rem;
+}
+
+thead tr {
+    background-color: #eee;
+}
+
+.container td:not(.time-cell) {
+    width: 155px;
+}
+
+
+.container button:disabled {
+    color: #333;
+    cursor: not-allowed;
+}
+
+.time-cell {
+    text-align: center;
+    width: 73px;
+    background-color: #f4f4f4;
+    padding: 0.5rem 1rem;
+}

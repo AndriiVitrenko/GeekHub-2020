@@ -1,0 +1,14 @@
+.selector {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.selector span {
+    margin: 0 2rem;
+}
+
+.material-icons {
+    cursor: pointer;
+}

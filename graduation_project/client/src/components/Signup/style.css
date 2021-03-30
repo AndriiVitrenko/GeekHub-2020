@@ -1,0 +1,23 @@
+.sign-up-form {
+    margin-top: 4rem;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.sign-up-form .form-field:nth-child(1),
+.sign-up-form .form-field:nth-child(2) {
+    flex-basis: 45%;
+}
+
+.sign-up-form .helper-text {
+    margin-top: 7px;
+    color: #f44336;
+    font-family: "Roboto", "Helvetice Nue", sans-serif;
+    font-size: 13px;
+}
+
+.sign-up-form button[type="submit"] {
+    margin-top: 2%;
+}

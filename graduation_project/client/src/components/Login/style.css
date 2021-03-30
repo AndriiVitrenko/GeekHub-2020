@@ -1,0 +1,14 @@
+.log-in-form {
+    margin-top: 4rem;
+}
+
+.log-in-form .helper-text {
+    margin-top: 7px;
+    color: #f44336;
+    font-family: "Roboto", "Helvetice Nue", sans-serif;
+    font-size: 13px;
+}
+
+.log-in-form button[type="submit"] {
+    margin-top: 2%;
+}
