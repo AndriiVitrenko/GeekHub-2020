@@ -1,21 +1,17 @@
 const router = require('express').Router();
-const fs = require('fs').promises;
-const path = require('path');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
+const Users = require('./models');
 
 const serverErrorMessage = 'Произошла ошибка на сервере. Перезагрузите страницу и попробуйте снова.';
 
 router.post('/getTasks', (req, res) => {
     const {userId} = req.body;
+    Users.findById(userId)
+        .then(result => {
+            if (result) {
+                const user = result;
 
-    fs.readFile(path.resolve(__dirname, './dataBase.json'))
-        .then((result) => {
-            const userBase = JSON.parse(result).users;
-
-            const user = userBase.filter(user => user._id === userId)[0];
-
-            if (user) {
                 res.json({
                     tasks: user.tasks,
                 })
@@ -24,28 +20,22 @@ router.post('/getTasks', (req, res) => {
                 res.status(404).json({
                     message: 'Пользователь не найден.'
                 })
-            }            
+            }
         })
-        .catch(error => res.status(500).json({
-            message: serverErrorMessage,
-        }))
+        .catch(error => {
+            res.status(500).json({
+                message: serverErrorMessage,
+            })
+        })
 })
 
 router.post('/login', (req, res) => {
     const {email, password} = req.body;
-
-    fs.readFile(path.resolve(__dirname, './dataBase.json'))
+    Users.find({email})
         .then(async result => {
-            const userBase = JSON.parse(result).users;
-            
-            const user = userBase.filter(user => user.email === email)[0];
+            if (result.length) {
+                const user = result[0];
 
-            if (!user) {
-                res.status(404).json({
-                    message: 'Пользователь не найден. Проверьте почту.'
-                })
-            }
-            else {
                 if (await bcrypt.compare(password, user.password)) {
                     res.json({
                         tasks: user.tasks,
@@ -58,6 +48,11 @@ router.post('/login', (req, res) => {
                     })
                 }
             }
+            else {
+                res.status(404).json({
+                    message: 'Пользователь не найден. Проверьте почту.'
+                })
+            }
         })
         .catch(error => {
             res.status(500).json({
@@ -68,86 +63,72 @@ router.post('/login', (req, res) => {
 
 router.post('/signup', (req, res) => {
     const {name, surname, phone, email, password} = req.body;
-
-    fs.readFile(path.resolve(__dirname, './dataBase.json'))
+    Users.find({email})
         .then(async result => {
-            const userBase = JSON.parse(result).users;
-
-            if (userBase.some(user => user.email === email)) {
+            if (result.length) {
                 res.status(403).json({
                     message: 'Этот пользователь уже зарегистирован.'
                 })
 
                 return;
             }
-
-            const newUser = {
-                _id: crypto.randomBytes(20).toString('hex'),
-                email, 
-                password: await bcrypt.hash(password, await bcrypt.genSalt()),
-                name, 
-                surname,
-                tasks: [],
-            }
-
-            if (phone) {
-                newUser.phone = phone;
-            }
-
-            userBase.push(newUser)
-
-            fs.writeFile(path.resolve(__dirname, './dataBase.json'), JSON.stringify({ users: userBase}))
-                .then(() => {
-                    res.json({
-                        key: newUser._id,
-                        tasks: newUser.tasks,
-                    })
+            else {
+                const newUser = new Users({
+                    _id: crypto.randomBytes(20).toString('hex'),
+                    email, 
+                    password: await bcrypt.hash(password, await bcrypt.genSalt()),
+                    name, 
+                    surname,
+                    tasks: [],
+                    phone: phone || '',
                 })
-                .catch(error => {
-                    res.status(500).json({
-                        message: serverErrorMessage,
+
+                newUser.save()
+                    .then(() => {
+                        res.json({
+                            key: newUser._id,
+                            tasks: newUser.tasks,
+                        })
                     })
-                })
+                    .catch(error => {
+                        res.status(500).json({
+                            message: serverErrorMessage,
+                        })
+                    })
+            }
         })
         .catch(error => {
             res.status(500).json({
                 message: serverErrorMessage,
             })
-        })
+        })          
 })
 
 router.post('/addTask', (req, res) => {
     const {task, userId} = req.body;
-
-    fs.readFile(path.resolve(__dirname, './dataBase.json'))
+    Users.findById(userId)
         .then(result => {
-            const userBase = JSON.parse(result).users;
+            if (result) {
+                task._id = crypto.randomBytes(10).toString('hex');
+                result.tasks.push(task)
 
-            const user = userBase.filter(user => user._id === userId)[0];
-
-            if (!user) {
+                result.save()
+                    .then(() => {
+                        res.json({
+                            taskId: task._id,
+                        })
+                    })
+                    .catch(error => {
+                        res.status(500).json({
+                            message: serverErrorMessage,
+                        })
+                    })
+            }
+            else {
                 res.status(404).json({
                     message: 'Пользователь не найден. Попробуйте войти в систему еще раз.',
                 })
-
-                return;
             }
-
-            task._id = crypto.randomBytes(10).toString('hex');
-
-            user.tasks.push(task);
-
-            fs.writeFile(path.resolve(__dirname, './dataBase.json'), JSON.stringify({users: userBase}))
-                .then(() => {
-                    res.json({
-                        taskId: task._id,
-                    })
-                })
-                .catch(error => {
-                    res.status(500).json({
-                        message: serverErrorMessage,
-                    })
-                })
         })
         .catch(error => {
             res.status(500).json({
@@ -158,32 +139,26 @@ router.post('/addTask', (req, res) => {
 
 router.post('/deleteTask', (req, res) => {
     const {userId, taskId} = req.body;
-
-    fs.readFile(path.resolve(__dirname, './dataBase.json'))
+    Users.findById(userId)
         .then(result => {
-            const userBase = JSON.parse(result).users;
+            if (result) {
+                result.tasks = result.tasks.filter(task => task._id !== taskId);
 
-            const user = userBase.filter(user => user._id === userId)[0];
-
-            if (!user) {
-                res.status(404).json({
-                    message: 'Пользователь не найден. Попробуйте войти в систему еще раз.',
-                })
-
-                return;
-            }
-
-            user.tasks = user.tasks.filter(task => task._id !== taskId);
-
-            fs.writeFile(path.resolve(__dirname, './dataBase.json'), JSON.stringify({users: userBase}))
-                .then(() => {
-                    res.json({})
-                })
-                .catch(error => {
-                    res.status(500).json({
-                        message: serverErrorMessage,
+                result.save()
+                    .then(() => {
+                        res.json({})
                     })
+                    .catch(error => {
+                        res.status(500).json({
+                            message: serverErrorMessage,
+                        })
+                    })
+            }
+            else {
+                res.status(404).json({
+                    message: 'Пользователь не найден. Попробуйте войти в систему еще раз.'
                 })
+            }
         })
         .catch(error => {
             res.status(500).json({
@@ -195,34 +170,30 @@ router.post('/deleteTask', (req, res) => {
 router.put('/editTask', (req, res) => {
     const {newTask, userId, taskId} = req.body;
 
-    fs.readFile(path.resolve(__dirname, './dataBase.json'))
+    Users.findById(userId)
         .then(result => {
-            const userBase = JSON.parse(result).users;
+            if (result) {
+                const index = result.tasks.indexOf(result.tasks.filter(task => task._id === taskId)[0])
 
-            const user = userBase.filter(user => user._id === userId)[0];
+                result.tasks[index] = newTask;
 
-            if (!user) {
+                result.save()
+                    .then(() => {
+                        res.json({
+                            index,
+                        })
+                    })
+                    .catch(error => {
+                        res.status(500).json({
+                            message: serverErrorMessage,
+                        })
+                    })
+            }
+            else {
                 res.status(404).json({
                     message: 'Пользователь не найден. Попробуйте войти в систему еще раз.',
                 })
-                return;
             }
-            
-            const index = user.tasks.indexOf(user.tasks.filter(task => task._id === taskId)[0]);
-
-            user.tasks[index] = newTask;
-
-            fs.writeFile(path.resolve(__dirname, './dataBase.json'), JSON.stringify({users: userBase}))
-                .then(() => {
-                    res.json({
-                        index,
-                    })
-                })
-                .catch(error => {
-                    res.status(500).json({
-                        message: serverErrorMessage,
-                    })
-                })
         })
         .catch(error => {
             res.status(500).json({

@@ -14,7 +14,7 @@ import './style.css';
 import { getTasks } from "../../actions";
 
 export const Home: React.FC = () => {
-    const {currentUserKey, focusedTime} = useSelector((state: StateInterface) => state);
+    const {currentUserKey, focusedTime, tasks} = useSelector((state: StateInterface) => state);
     const history = useHistory();
     const dispatch = useDispatch();
 
@@ -22,7 +22,7 @@ export const Home: React.FC = () => {
         if (!currentUserKey) {
             history.push('/login')
         }
-        else {
+        else if (currentUserKey && !tasks.length) {
             dispatch(getTasks(currentUserKey))
         }
     }, [])
